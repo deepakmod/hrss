@@ -1,0 +1,89 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: hrss
+  datasource:
+    url: jdbc:mysql://localhost:3306/hrss_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: ${MYSQL_PASSWORD:India@123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show-sql: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:google-client-id-placeholder}
+            client-secret: ${GOOGLE_CLIENT_SECRET:google-client-secret-placeholder}
+            scope:
+              - email
+              - profile
+          azure:
+            client-id: ${AZURE_CLIENT_ID:azure-client-id-placeholder}
+            client-secret: ${AZURE_CLIENT_SECRET:azure-client-secret-placeholder}
+            scope:
+              - openid
+              - profile
+              - email
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          azure:
+            authorization-uri: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+            token-uri: https://login.microsoftonline.com/common/oauth2/v2.0/token
+            user-info-uri: https://graph.microsoft.com/oidc/userinfo
+            jwk-set-uri: https://login.microsoftonline.com/common/discovery/v2.0/keys
+            user-name-attribute: sub
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dGhpcy1pcy1hLXN1cGVyLXNlY3JldC1kZXZlbG9wbWVudC1rZXktZm9yLWhybXMtcHJvamVjdC1iYWNrZW5kLXNlY3VyaXR5}
+    accessTokenExpirationInMs: 900000 # 15 minutes
+    refreshTokenExpirationInMs: 604800000 # 7 days
+  oauth2:
+    authorizedRedirectUri: ${OAUTH2_REDIRECT_URI:http://localhost:3000/oauth2/redirect}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:8080}
+
+# Actuator Config (Probes for Kubernetes/Docker health checks)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+# Swagger / OpenAPI config
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: alpha
+
+logging:
+  level:
+    org.springframework.security: INFO
+    org.hibernate.SQL: INFO
+    com.mod.hrss: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - [CorrelationID: %X{correlationId}] - %msg%n"
