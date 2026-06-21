@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -31,5 +32,5 @@ public class Attendance extends BaseEntity {
     private LocalDateTime checkOut;
 
     @Column(name = "work_hours")
-    private Double workHours;
+    private BigDecimal workHours;
 }

@@ -30,10 +30,11 @@ public class JwtTokenProvider {
             @Value("${app.jwt.refreshTokenExpirationInMs:604800000}") long refreshTokenExpirationInMs // 7 days
     ) {
         // Base64 decode or use string bytes. If the string is a valid Base64 encoded string of at least 256 bits, we decode it.
+        // Note: JJWT throws DecodingException (not IllegalArgumentException) for invalid Base64, so we catch Exception broadly.
         byte[] keyBytes;
         try {
             keyBytes = Decoders.BASE64.decode(jwtSecret);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
         }
         this.key = Keys.hmacShaKeyFor(keyBytes);

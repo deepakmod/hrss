@@ -3,6 +3,7 @@ package com.mod.hrss.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -13,5 +14,5 @@ public class AttendanceDto {
     private String employeeName;
     private LocalDateTime checkIn;
     private LocalDateTime checkOut;
-    private Double workHours;
+    private BigDecimal workHours;
 }
